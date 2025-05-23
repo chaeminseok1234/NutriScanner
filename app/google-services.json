@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "967719099993",
+    "project_id": "nutriscanner-pnu",
+    "storage_bucket": "nutriscanner-pnu.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967719099993:android:e6d3b97ec280d8445b1b48",
+        "android_client_info": {
+          "package_name": "com.example.nutriscanner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF4O8DWju6ap6ASTO7CNQMnXQ8TY4_Dj4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
