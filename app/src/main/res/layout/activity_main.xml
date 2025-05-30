@@ -1,7 +1,163 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</LinearLayout>
+    <!-- 메인 컨텐츠 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:padding="16dp">
+
+        <!-- Toolbar -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="16dp">
+
+            <ImageButton
+                android:id="@+id/menuButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@null"
+                android:contentDescription="Menu"
+                android:src="@drawable/ic_menu"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true" />
+
+            <TextView
+                android:id="@+id/appName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NutriScanner"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:id="@+id/withChatGPT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="with ChatGPT"
+                android:textSize="12sp"
+                android:textColor="#000000"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDDDDD" />
+
+        <!-- 인삿말 박스 -->
+        <TextView
+            android:id="@+id/greetingText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="안녕하세요.\nAI 영양 분석 및 관리 도우미\nNutriScanner입니다.\n\n무엇을 도와드릴까요?"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:padding="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#EEF6FF"
+            android:background="@drawable/rounded_box"
+            android:textStyle="bold"/>
+
+        <!-- 버튼 박스 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:weightSum="2"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center"
+                android:layout_margin="4dp"
+                android:backgroundTint="#F4F4F4"
+                android:background="@drawable/rounded_bg">
+
+                <ImageButton
+                    android:id="@+id/cameraButton"
+                    android:layout_width="65dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_camera"
+                    android:contentDescription="Camera"
+                    android:background="@null"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="카메라로 바로찍기"
+                    android:textSize="14sp"
+                    android:textColor="#000000"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center"
+                android:layout_margin="4dp"
+                android:backgroundTint="#F4F4F4"
+                android:background="@drawable/rounded_box">
+
+                <ImageButton
+                    android:id="@+id/galleryButton"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_gallery"
+                    android:contentDescription="Gallery"
+                    android:background="@null"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="갤러리에서 가져오기"
+                    android:textSize="14sp"
+                    android:textColor="#000000"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 하단 버튼 -->
+        <Button
+            android:id="@+id/recordButton"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text="나의 기록 다시보기"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:background="@drawable/rounded_button"
+            android:layout_marginBottom="16dp" />
+    </LinearLayout>
+
+    <!-- 네비게이션 드로어 -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#FFFFFF" />
+</androidx.drawerlayout.widget.DrawerLayout>
