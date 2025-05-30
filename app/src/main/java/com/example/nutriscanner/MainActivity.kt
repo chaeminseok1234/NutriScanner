@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         // 1) Auth 인스턴스 가져와서
         auth = FirebaseAuth.getInstance()
 
@@ -47,35 +50,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 3) 로그인 되어 있으면 레이아웃 세팅
+
         setContentView(R.layout.activity_main)
 
-        cameraButton = findViewById(R.id.cameraButton) // xml에서 id 맞게 설정 필요
-        galleryButton = findViewById(R.id.galleryButton)
-
-        cameraButton.setOnClickListener {
-            if (checkCameraPermission()) {
-                openCamera()
-            } else {
-                requestCameraPermission()
-            }
-        }
-
-        galleryButton.setOnClickListener {
-            if (checkStoragePermission()) {
-                openGallery()
-            } else {
-                requestStoragePermission()
-            }
-        }
-
-        drawerLayout = findViewById(R.id.drawerLayout)
-        menuButton = findViewById(R.id.menuButton)
-
-        menuButton.setOnClickListener {
-            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.openDrawer(GravityCompat.START)
-            }
-        }
+        initViews()
+        setupButtonListeners()
+        setupDrawerMenuListener()
     }
 
     private fun checkCameraPermission(): Boolean {
@@ -168,6 +148,57 @@ class MainActivity : AppCompatActivity() {
                     // 선택한 이미지 Uri 처리
                     Toast.makeText(this, "사진 선택 완료", Toast.LENGTH_SHORT).show()
                 }
+            }
+        }
+    }
+
+    private fun initViews() {
+        cameraButton = findViewById(R.id.cameraButton)
+        galleryButton = findViewById(R.id.galleryButton)
+        drawerLayout = findViewById(R.id.drawerLayout)
+        menuButton = findViewById(R.id.menuButton)
+    }
+
+    private fun setupButtonListeners() {
+        cameraButton.setOnClickListener {
+            if (checkCameraPermission()) {
+                openCamera()
+            } else {
+                requestCameraPermission()
+            }
+        }
+
+        galleryButton.setOnClickListener {
+            if (checkStoragePermission()) {
+                openGallery()
+            } else {
+                requestStoragePermission()
+            }
+        }
+
+        menuButton.setOnClickListener {
+            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
+        }
+    }
+
+    private fun setupDrawerMenuListener() {
+        val navView = findViewById<NavigationView>(R.id.navigationView)
+
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_camera -> {
+                    if (checkCameraPermission()) openCamera() else requestCameraPermission()
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_gallery -> {
+                    if (checkStoragePermission()) openGallery() else requestStoragePermission()
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                else -> false
             }
         }
     }
