@@ -2,20 +2,10 @@ package com.example.nutriscanner
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Button
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.example.nutriscanner.ui.theme.MyApplicationTheme
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -25,52 +15,62 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
-class LoginActivity : ComponentActivity() {
+class LoginActivity : AppCompatActivity() {
+
     companion object {
+        private const val RC_SIGN_IN = 1001
         private const val TAG = "LoginActivity"
     }
 
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
-    private val signInLauncher = registerForActivityResult(StartActivityForResult()) { result ->
-        val data = result.data
-        val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
-        try {
-            val account = task.getResult(ApiException::class.java)!!
-            firebaseAuthWithGoogle(account.idToken!!)
-        } catch (e: ApiException) {
-            Toast.makeText(this, "구글 로그인 실패: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+
+        Log.d("LoginActivity", "onCreate 시작!")
+
+
+        // 1) FirebaseAuth 초기화
         auth = FirebaseAuth.getInstance()
 
+        // 2) GoogleSignIn 옵션 설정
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken(getString(R.string.default_web_client_id)) // google-services.json에 있는 클라이언트 ID
             .requestEmail()
             .build()
+
+        // 3) GoogleSignInClient 생성
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        setContent {
-            MyApplicationTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    LoginScreen(
-                        onGoogleClick = { signInWithGoogle() }
-                    )
-                }
-            }
+        // 4) 버튼에 클릭 리스너 달기
+        findViewById<Button>(R.id.btnGoogleSignIn).setOnClickListener {
+            signInWithGoogle()
         }
     }
 
     private fun signInWithGoogle() {
-        val intent = googleSignInClient.signInIntent
-        signInLauncher.launch(intent)
+        val signInIntent: Intent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_SIGN_IN) {
+            val task: Task<GoogleSignInAccount> =
+                GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google 로그인 성공
+                val account = task.getResult(ApiException::class.java)!!
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                // Google 로그인 실패
+                Log.w(TAG, "Google sign in failed", e)
+                Toast.makeText(this, "구글 로그인 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
@@ -78,40 +78,16 @@ class LoginActivity : ComponentActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { authResult ->
                 if (authResult.isSuccessful) {
+                    // 로그인 성공
                     Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
+                    // 다음 화면으로 이동
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
+                    // 로그인 실패
+                    Log.w(TAG, "signInWithCredential:failure", authResult.exception)
                     Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
                 }
             }
-    }
-}
-
-@Composable
-fun LoginScreen(onGoogleClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "로그인/회원가입",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "• Google 계정 연동 소셜 로그인을 지원합니다.")
-        Text(text = "• 아래 버튼을 눌러 로그인해주세요.")
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(
-            onClick = onGoogleClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-        ) {
-            Text(text = "Google로 로그인하기")
-        }
     }
 }
