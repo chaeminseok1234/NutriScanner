@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 공통 메뉴 -->
+    <group android:title="분석도구">
+        <item
+            android:id="@+id/nav_camera"
+            android:icon="@drawable/ic_camera"
+            android:title="카메라" />
+
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_gallery"
+            android:title="갤러리" />
+    </group>
+
+    <group android:title="기록관리">
+        <item
+            android:id="@+id/nav_records"
+            android:icon="@drawable/ic_check"
+            android:title="나의 기록" />
+    </group>
+
+
+</menu>
