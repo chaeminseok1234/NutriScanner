@@ -16,8 +16,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var auth: FirebaseAuth
 
     private lateinit var cameraButton: ImageButton
     private lateinit var galleryButton: ImageButton
@@ -33,7 +35,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main) // 본인의 레이아웃 파일명으로 변경
+
+        // 1) Auth 인스턴스 가져와서
+        auth = FirebaseAuth.getInstance()
+
+        // 2) 로그인 안 된 상태면 LoginActivity로
+        if (auth.currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
+        // 3) 로그인 되어 있으면 레이아웃 세팅
+        setContentView(R.layout.activity_main)
 
         cameraButton = findViewById(R.id.cameraButton) // xml에서 id 맞게 설정 필요
         galleryButton = findViewById(R.id.galleryButton)
