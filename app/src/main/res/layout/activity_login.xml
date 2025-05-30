@@ -17,8 +17,9 @@
         <TextView
             android:id="@+id/loginTitle"
             android:text="로그인/회원가입"
-            android:textSize="24sp"
+            android:textSize="24dp"
             android:textStyle="bold"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -28,22 +29,35 @@
             android:layout_marginTop="24dp"
             android:text="• Google 계정 연동 소셜 로그인을 지원합니다."
             android:lineSpacingExtra="4dp"
+            android:textColor="@color/black"
+            android:textSize="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/loginDecription2"
             android:text="• 아래 버튼을 눌러 로그인해주세요."
             android:lineSpacingExtra="4dp"
+            android:textColor="@color/black"
+            android:textSize="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <!-- 버튼 -->
         <Button
             android:id="@+id/btnGoogleSignIn"
-            android:layout_marginTop="32dp"
-            android:text="Google로 로그인하기"
             android:layout_width="match_parent"
-            android:layout_height="48dp"/>
+            android:layout_height="48dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/login_button"
+            android:drawableStart="@drawable/ic_google_logo"
+            android:drawablePadding="12dp"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Google로 로그인하기"
+            android:textSize="18dp"
+            android:textAllCaps="false"
+            android:textColor="@color/black" />
     </LinearLayout>
 
 </LinearLayout>
