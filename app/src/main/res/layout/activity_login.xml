@@ -1,7 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 제목 -->
+        <TextView
+            android:id="@+id/loginTitle"
+            android:text="로그인/회원가입"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- 설명 -->
+        <TextView
+            android:id="@+id/loginDecription1"
+            android:layout_marginTop="24dp"
+            android:text="• Google 계정 연동 소셜 로그인을 지원합니다."
+            android:lineSpacingExtra="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/loginDecription2"
+            android:text="• 아래 버튼을 눌러 로그인해주세요."
+            android:lineSpacingExtra="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- 버튼 -->
+        <Button
+            android:id="@+id/btnGoogleSignIn"
+            android:layout_marginTop="32dp"
+            android:text="Google로 로그인하기"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"/>
+    </LinearLayout>
 
 </LinearLayout>
