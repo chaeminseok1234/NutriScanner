@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -60,25 +61,60 @@ class AnalyzeActivity : AppCompatActivity() {
         selectedPhoto.visibility     = View.GONE
         analyzeImageButton.isEnabled = false   // 사진 선택 전엔 비활성화해둠
 
+        // MainActivity에서 넘어온 Intent에 이미지 정보가 있는지 확인
+        handleIncomingImage()
+
         // 3) photoCard(카드 전체) 클릭 → 갤러리 열기
         photoCard.setOnClickListener {
             openGalleryWithPermissionCheck()
         }
 
-        // 4) 이미지 분석하기 버튼 클릭 시 (예시: 토스트 출력)
+        // 4) 이미지 분석하기 버튼 클릭 시
         analyzeImageButton.setOnClickListener {
             Toast.makeText(this, "이미지 분석 로직을 여기에 추가하세요.", Toast.LENGTH_SHORT).show()
         }
 
-        // 5) 음식목록 +버튼 클릭 → 다이얼로그 띄우기
+        // 5) 음식목록 +버튼 클릭 -> 다이얼로그 띄우기
         addFoodButton.setOnClickListener {
             showAddFoodDialog()
         }
 
-        // 6) 영양성분 분석하기 버튼 클릭 (예시)
+        // 6) 영양성분 분석하기 버튼 클릭
         analyzeNutritionButton.setOnClickListener {
             Toast.makeText(this, "영양성분 분석 로직을 여기에 추가하세요.", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun handleIncomingImage() {
+        // Intent에 "imageBitmap" 있으면 Bitmap으로 처리
+        val bmp = intent.getParcelableExtra<Bitmap>("imageBitmap")
+        if (bmp != null) {
+            displayImage(bmp)
+            return
+        }
+
+        // Uri로 넘겼다면 "imageUri"로 처리
+        val uriString = intent.getStringExtra("imageUri")
+        if (!uriString.isNullOrEmpty()) {
+            val uri = Uri.parse(uriString)
+            displayImage(uri)
+        }
+    }
+
+    // Bitmap 형태로 들어왔을 때 보여주는 함수
+    private fun displayImage(bitmap: Bitmap) {
+        placeholderLayout.visibility = View.GONE
+        selectedPhoto.visibility     = View.VISIBLE
+        selectedPhoto.setImageBitmap(bitmap)
+        analyzeImageButton.isEnabled = true
+    }
+
+    // Uri 형태로 들어왔을 때 보여주는 함수
+    private fun displayImage(uri: Uri) {
+        placeholderLayout.visibility = View.GONE
+        selectedPhoto.visibility     = View.VISIBLE
+        selectedPhoto.setImageURI(uri)
+        analyzeImageButton.isEnabled = true
     }
 
     // 권한이 있으면 갤러리 실행, 없으면 요청

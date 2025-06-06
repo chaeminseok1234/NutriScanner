@@ -136,10 +136,13 @@ class MainActivity : AppCompatActivity() {
 
         when (requestCode) {
             CAMERA_INTENT_CODE -> {
-                val photo = data?.extras?.get("data") as? Bitmap
-                if (photo != null) {
-                    // 사진 처리 - 예: ImageView에 표시하거나 파일 저장
-                    Toast.makeText(this, "사진 촬영 완료", Toast.LENGTH_SHORT).show()
+                // 카메라에서 찍은 썸네일 Bitmap 받아오기
+                val photoBitmap = data?.extras?.get("data") as? Bitmap
+                if (photoBitmap != null) {
+                    // AnalyzeActivity로 Bitmap 넘겨주기
+                    val intent = Intent(this, AnalyzeActivity::class.java)
+                    intent.putExtra("imageBitmap", photoBitmap)
+                    startActivity(intent)
                 }
             }
             GALLERY_INTENT_CODE -> {
