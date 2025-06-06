@@ -48,6 +48,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:22.1.1")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation ("com.google.android.material:material:1.9.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -59,6 +60,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.foundation.android)
+    implementation(libs.androidx.material3.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,4 +68,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 }
