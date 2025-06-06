@@ -1,0 +1,54 @@
+package com.example.nutriscanner.log
+
+import android.os.Bundle
+import android.util.Log
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.nutriscanner.R
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+
+class MyLogActivity : AppCompatActivity() {
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: MyLogAdapter
+    private lateinit var db: FirebaseFirestore
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_mylog)
+
+        db = FirebaseFirestore.getInstance()
+        recyclerView = findViewById(R.id.myLogRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        fetchDataFromFirestore()
+    }
+
+    private fun fetchDataFromFirestore() {
+        db.collection("logs")
+            //.orderBy("dateTime", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                Log.d("skrskr", "Firestore fetch 성공, ${result.size()}개 문서 있음")
+
+                val logList = result.map { doc ->
+                    LogItem(
+                        id = doc.getString("id") ?: doc.id,
+                        dateTime = doc.getString("dateTime") ?: "",
+                        imageUri = doc.getString("imageUri") ?: ""
+                    )
+                }
+                adapter = MyLogAdapter(logList.toMutableList()) { item ->
+                    Toast.makeText(this, "${item.dateTime} 선택됨", Toast.LENGTH_SHORT).show()
+                }
+                recyclerView.adapter = adapter
+            }
+            .addOnFailureListener {
+                Log.e("skrskr", "Firestore fetch 실패: ${it.message}")
+            }
+    }
+}
