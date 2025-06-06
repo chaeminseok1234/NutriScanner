@@ -1,0 +1,200 @@
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 1) 여기서 LinearLayout을 세로방향으로 만들고 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- 2) 툴바만 먼저 배치 (ScrollView 바깥) -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="16dp"
+            android:background="#FFFFFF">
+
+            <ImageButton
+                android:id="@+id/menuButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@null"
+                android:src="@drawable/ic_menu"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="Menu"/>
+
+            <TextView
+                android:id="@+id/appName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NutriScanner"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_centerInParent="true"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <TextView
+                android:id="@+id/withChatGPT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="with ChatGPT"
+                android:textSize="12sp"
+                android:textColor="#000000"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"/>
+        </RelativeLayout>
+
+        <!-- 구분선 (툴바 아래) -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDDDDD"/>
+
+        <!-- 3) 툴바 아래부터 스크롤 가능하게 감싸는 영역 -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- 사진 추가 카드를 비롯한 나머지 컨텐츠 -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/photoCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="#F2F2F2">
+
+                    <!-- 이미지를 보여줄 ImageView  -->
+                    <ImageView
+                        android:id="@+id/selectedPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+
+                    <!--사진 추가 안내 레이아웃 (이미지 없을 때만 보임) -->
+                    <LinearLayout
+                        android:id="@+id/placeholderLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="#EFEFEF">
+
+                        <ImageView
+                            android:id="@+id/placeholderIcon"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_photo_plus"
+                            android:contentDescription="사진 추가 아이콘"/>
+
+                        <TextView
+                            android:id="@+id/placeholderText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="사진을 추가해주세요"
+                            android:textSize="16sp"
+                            android:textColor="#555555"
+                            android:layout_marginTop="8dp"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <Button
+                    android:id="@+id/analyzeImageButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="이미지 분석하기"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:backgroundTint="#2E3B80"
+                    android:layout_marginBottom="18dp"
+                    android:layout_gravity="center"/>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="280dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="#E1F0FF"
+                    >
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="16dp"
+                        android:background="#ECF7FF">
+
+                        <!-- 제목 및 추가 버튼 -->
+                        <TextView
+                            android:id="@+id/foodListTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="음식 목록"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#000000"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"/>
+
+                        <ImageButton
+                            android:id="@+id/addFoodButton"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@null"
+                            android:src="@drawable/ic_add_circle"
+                            android:contentDescription="음식 추가 버튼"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentTop="true"/>
+
+                        <!-- 실제 아이템 뷰(음식명 + X 버튼)를 추가할 컨테이너 -->
+                        <LinearLayout
+                            android:id="@+id/foodListContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_below="@id/foodListTitle"
+                            android:layout_marginTop="18dp"/>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <Button
+                    android:id="@+id/analyzeNutritionButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="영양성분 분석하기"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:backgroundTint="#2E3B80"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- 네비게이션 드로어 -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#FFFFFF"
+        app:menu="@menu/drawer_menu"/>
+</androidx.drawerlayout.widget.DrawerLayout>

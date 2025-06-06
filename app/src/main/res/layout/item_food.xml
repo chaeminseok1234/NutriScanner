@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    android:background="@drawable/rounded_item"
+    android:paddingStart="12dp"
+    android:paddingEnd="8dp"
+    android:layout_marginBottom="8dp"
+    android:gravity="center_vertical">
+
+    <!-- 음식 이름 -->
+    <TextView
+        android:id="@+id/foodNameText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="음식이름"
+        android:textSize="18dp"
+        android:textColor="#333333"/>
+
+    <!-- X 버튼 (삭제) -->
+    <ImageButton
+        android:id="@+id/removeFoodButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@null"
+        android:src="@drawable/ic_cancel"
+        android:contentDescription="음식 삭제"
+        />
+</LinearLayout>
