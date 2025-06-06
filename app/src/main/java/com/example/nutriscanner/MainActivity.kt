@@ -9,7 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.nutriscanner.log.MyLogActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var cameraButton: ImageButton
     private lateinit var galleryButton: ImageButton
+    private lateinit var recordButton: Button
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var menuButton: ImageButton
@@ -155,6 +157,7 @@ class MainActivity : AppCompatActivity() {
     private fun initViews() {
         cameraButton = findViewById(R.id.cameraButton)
         galleryButton = findViewById(R.id.galleryButton)
+        recordButton = findViewById(R.id.recordButton)
         drawerLayout = findViewById(R.id.drawerLayout)
         menuButton = findViewById(R.id.menuButton)
     }
@@ -174,6 +177,10 @@ class MainActivity : AppCompatActivity() {
             } else {
                 requestStoragePermission()
             }
+        }
+
+        recordButton.setOnClickListener {
+            startActivity(Intent(this, MyLogActivity::class.java))
         }
 
         menuButton.setOnClickListener {
@@ -198,6 +205,12 @@ class MainActivity : AppCompatActivity() {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
+                R.id.nav_records -> {
+                    startActivity(Intent(this, MyLogActivity::class.java))
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+
                 else -> false
             }
         }
