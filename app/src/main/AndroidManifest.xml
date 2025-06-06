@@ -25,6 +25,8 @@
             android:name=".LoginActivity"
             android:exported="true" />
 
+        <activity android:name=".AnalyzeActivity" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

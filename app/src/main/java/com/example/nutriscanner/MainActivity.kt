@@ -169,11 +169,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         galleryButton.setOnClickListener {
-            if (checkStoragePermission()) {
-                openGallery()
-            } else {
-                requestStoragePermission()
-            }
+            val intent = Intent(this, AnalyzeActivity::class.java)
+            startActivity(intent)
         }
 
         menuButton.setOnClickListener {
