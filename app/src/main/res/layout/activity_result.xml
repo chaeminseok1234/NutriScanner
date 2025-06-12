@@ -1,0 +1,108 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <!-- Toolbar -->
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp">
+
+        <TextView
+            android:id="@+id/appName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NutriScanner"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:id="@+id/withChatGPT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="with ChatGPT"
+            android:textSize="12sp"
+            android:textColor="#000000"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <!-- 음식 이미지 -->
+    <ImageView
+        android:id="@+id/foodImage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"/>
+
+    <!-- 음식 목록 및 영양 정보 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/foodRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="1"/>
+
+    <!-- 전체 영양 합계 박스 -->
+    <LinearLayout
+        android:id="@+id/totalInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/rounded_box"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전체 영양 정보"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/totalNutrients"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+
+    <!-- GPT 한마디 박스 -->
+    <LinearLayout
+        android:id="@+id/gptCommentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/rounded_box"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/gptCommentLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ChatGPT의 한마디"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/gptComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="여기에 ChatGPT가 하는 말이 나옵니다."
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
+</LinearLayout>
