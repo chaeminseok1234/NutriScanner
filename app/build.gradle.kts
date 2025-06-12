@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     id("com.google.gms.google-services")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -49,6 +50,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation ("com.google.android.material:material:1.9.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    implementation("org.tensorflow:tensorflow-lite:2.7.0")
+    implementation("org.tensorflow:tensorflow-lite-support:2.7.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -61,6 +66,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,5 +75,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 
 }
