@@ -53,7 +53,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     implementation("org.tensorflow:tensorflow-lite:2.7.0")
-    implementation("org.tensorflow:tensorflow-lite-support:2.7.0")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
