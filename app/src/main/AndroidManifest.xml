@@ -11,9 +11,6 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -28,7 +25,7 @@
             android:name=".LoginActivity"
             android:exported="true" />
 
-        <activity android:name=".analyze.AnalyzeActivity" />
+        <activity android:name=".AnalyzeActivity" />
 
         <activity
             android:name=".log.MyLogActivity"
@@ -37,11 +34,6 @@
         <activity
             android:name=".result.ResultActivity"
             android:exported="true" />
-
-        <activity
-            android:name=".result.NutritionFeedbackActivity"
-            android:exported="true" />
-
 
         <activity
             android:name=".MainActivity"
