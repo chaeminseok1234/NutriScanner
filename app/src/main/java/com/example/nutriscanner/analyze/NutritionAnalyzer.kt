@@ -22,7 +22,7 @@ class NutritionAnalyzer(context: Context) {
                 OkHttpClient.Builder()
                     .addInterceptor { chain ->
                         val request = chain.request().newBuilder()
-                            .addHeader("Authorization", "Bearer $")
+                            .addHeader("Authorization", "Bearer")
                             .build()
                         chain.proceed(request)
                     }

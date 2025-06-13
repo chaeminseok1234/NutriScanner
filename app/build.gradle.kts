@@ -22,6 +22,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+
     }
 
     buildTypes {
@@ -85,4 +86,15 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
 
+
+}
+
+configurations.all {
+    resolutionStrategy {
+        // org.jetbrains:annotations 라이브러리의 23.0.0 버전만 강제로 사용
+        force("org.jetbrains:annotations:23.0.0")
+
+        // com.intellij:annotations 모듈을 제외하여 중복을 피함
+        exclude(group = "com.intellij", module = "annotations")
+    }
 }
