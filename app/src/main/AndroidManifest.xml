@@ -25,7 +25,7 @@
             android:name=".LoginActivity"
             android:exported="true" />
 
-        <activity android:name=".AnalyzeActivity" />
+        <activity android:name=".analyze.AnalyzeActivity" />
 
         <activity
             android:name=".log.MyLogActivity"
@@ -33,6 +33,10 @@
 
         <activity
             android:name=".result.ResultActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".result.NutritionFeedbackActivity"
             android:exported="true" />
 
         <activity
