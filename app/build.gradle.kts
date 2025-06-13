@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -11,6 +12,7 @@ android {
     namespace = "com.example.nutriscanner"
     compileSdk = 35
 
+
     defaultConfig {
         applicationId = "com.example.nutriscanner"
         minSdk = 24
@@ -19,6 +21,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -53,7 +56,11 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     implementation("org.tensorflow:tensorflow-lite:2.7.0")
-    implementation("org.tensorflow:tensorflow-lite-support:2.7.0")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -68,6 +75,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

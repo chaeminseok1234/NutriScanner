@@ -1,10 +1,11 @@
-package com.example.nutriscanner
+package com.example.nutriscanner.analyze
 
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,6 +19,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
+import com.example.nutriscanner.MainActivity
+import com.example.nutriscanner.R
+import com.example.nutriscanner.result.NutritionFeedbackActivity
 
 class AnalyzeActivity : AppCompatActivity() {
 
@@ -35,9 +40,15 @@ class AnalyzeActivity : AppCompatActivity() {
     private lateinit var foodListContainer: LinearLayout
     private lateinit var analyzeNutritionButton: Button
 
+    // 이미지 분석용 변수
+    private lateinit var foodAnalyzer: FoodAnalyzer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_analyze)
+
+        // FoodAnalyzer 인스턴스 초기화
+        foodAnalyzer = FoodAnalyzer(this)
 
         val appNameText = findViewById<TextView>(R.id.appName)
 
@@ -71,7 +82,13 @@ class AnalyzeActivity : AppCompatActivity() {
 
         // 4) 이미지 분석하기 버튼 클릭 시
         analyzeImageButton.setOnClickListener {
-            Toast.makeText(this, "이미지 분석 로직을 여기에 추가하세요.", Toast.LENGTH_SHORT).show()
+            selectedPhoto.drawable?.let { drawable ->
+                val bitmap = (drawable as BitmapDrawable).bitmap
+                val foodName = foodAnalyzer.analyzeImage(bitmap) // 이미지 분석
+
+                // 분석된 음식 리스트에 추가
+                addFoodItem(foodName)
+            }
         }
 
         // 5) 음식목록 +버튼 클릭 -> 다이얼로그 띄우기
@@ -81,9 +98,26 @@ class AnalyzeActivity : AppCompatActivity() {
 
         // 6) 영양성분 분석하기 버튼 클릭
         analyzeNutritionButton.setOnClickListener {
-            Toast.makeText(this, "영양성분 분석 로직을 여기에 추가하세요.", Toast.LENGTH_SHORT).show()
+            // foodListContainer의 children에서 음식 이름을 가져와 List로 변환
+            val foodList = foodListContainer.children
+                .map { (it as LinearLayout).findViewById<TextView>(R.id.foodNameText).text.toString() }
+                .toList()  // Sequence를 List로 변환
+
+            // NutritionAnalyzer에서 GPT API 호출
+            val nutritionAnalyzer = NutritionAnalyzer(this)
+            nutritionAnalyzer.getNutritionFeedback(foodList) { feedback ->
+                // 새로운 액티비티로 영양성분 분석 결과를 넘겨서 화면에 띄우기
+                val intent = Intent(this, NutritionFeedbackActivity::class.java).apply {
+                    putExtra("nutritionFeedback", feedback)  // 분석된 피드백 전달
+                }
+                startActivity(intent)
+            }
         }
+
+
     }
+
+
 
     private fun handleIncomingImage() {
         // Intent에 "imageBitmap" 있으면 Bitmap으로 처리

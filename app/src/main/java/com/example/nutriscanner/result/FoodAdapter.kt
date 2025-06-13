@@ -22,7 +22,8 @@ class FoodAdapter(private val foodList: List<Food>) : RecyclerView.Adapter<FoodA
     override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
         val food = foodList[position]
         holder.foodName.text = food.name
-        holder.nutrientInfo.text = "나트륨: ${food.nutrients["나트륨"]}, 단백질: ${food.nutrients["단백질"]}, ... "
+        holder.nutrientInfo.text = "나트륨: ${food.nutrients["나트륨"]}, 단백질: ${food.nutrients["단백질"]}, " +
+                "탄수화물: ${food.nutrients["탄수화물"]}, 당: ${food.nutrients["당"]}, 지방: ${food.nutrients["지방"]}"
     }
 
     override fun getItemCount() = foodList.size
