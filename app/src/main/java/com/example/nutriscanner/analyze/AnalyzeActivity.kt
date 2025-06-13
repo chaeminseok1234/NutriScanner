@@ -19,8 +19,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import com.example.nutriscanner.MainActivity
 import com.example.nutriscanner.R
+import com.example.nutriscanner.result.NutritionFeedbackActivity
 
 class AnalyzeActivity : AppCompatActivity() {
 
@@ -80,7 +82,6 @@ class AnalyzeActivity : AppCompatActivity() {
 
         // 4) 이미지 분석하기 버튼 클릭 시
         analyzeImageButton.setOnClickListener {
-            //Toast.makeText(this, "이미지 분석 로직을 여기에 추가하세요.", Toast.LENGTH_SHORT).show()
             selectedPhoto.drawable?.let { drawable ->
                 val bitmap = (drawable as BitmapDrawable).bitmap
                 val foodName = foodAnalyzer.analyzeImage(bitmap) // 이미지 분석
@@ -97,9 +98,26 @@ class AnalyzeActivity : AppCompatActivity() {
 
         // 6) 영양성분 분석하기 버튼 클릭
         analyzeNutritionButton.setOnClickListener {
-            Toast.makeText(this, "영양성분 분석 로직을 여기에 추가하세요.", Toast.LENGTH_SHORT).show()
+            // foodListContainer의 children에서 음식 이름을 가져와 List로 변환
+            val foodList = foodListContainer.children
+                .map { (it as LinearLayout).findViewById<TextView>(R.id.foodNameText).text.toString() }
+                .toList()  // Sequence를 List로 변환
+
+            // NutritionAnalyzer에서 GPT API 호출
+            val nutritionAnalyzer = NutritionAnalyzer(this)
+            nutritionAnalyzer.getNutritionFeedback(foodList) { feedback ->
+                // 새로운 액티비티로 영양성분 분석 결과를 넘겨서 화면에 띄우기
+                val intent = Intent(this, NutritionFeedbackActivity::class.java).apply {
+                    putExtra("nutritionFeedback", feedback)  // 분석된 피드백 전달
+                }
+                startActivity(intent)
+            }
         }
+
+
     }
+
+
 
     private fun handleIncomingImage() {
         // Intent에 "imageBitmap" 있으면 Bitmap으로 처리
