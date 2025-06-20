@@ -1,5 +1,7 @@
 package com.example.nutriscanner.analyze
 
+import com.example.nutriscanner.BuildConfig
+import com.example.nutriscanner.api.ApiClient
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -11,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
@@ -23,6 +26,14 @@ import androidx.core.view.children
 import com.example.nutriscanner.MainActivity
 import com.example.nutriscanner.R
 import com.example.nutriscanner.result.NutritionFeedbackActivity
+import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
+import java.net.URLEncoder
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class AnalyzeActivity : AppCompatActivity() {
 
@@ -98,21 +109,107 @@ class AnalyzeActivity : AppCompatActivity() {
 
         // 6) 영양성분 분석하기 버튼 클릭
         analyzeNutritionButton.setOnClickListener {
-            // foodListContainer의 children에서 음식 이름을 가져와 List로 변환
-            val foodList = foodListContainer.children
-                .map { (it as LinearLayout).findViewById<TextView>(R.id.foodNameText).text.toString() }
-                .toList()  // Sequence를 List로 변환
+            // 0) 버튼 클릭 바로 로그
+            Log.d("AnalyzeActivity", "분석 버튼 클릭됨")
 
-            // NutritionAnalyzer에서 GPT API 호출
-            val nutritionAnalyzer = NutritionAnalyzer(this)
-            nutritionAnalyzer.getNutritionFeedback(foodList) { feedback ->
-                // 새로운 액티비티로 영양성분 분석 결과를 넘겨서 화면에 띄우기
-                val intent = Intent(this, NutritionFeedbackActivity::class.java).apply {
-                    putExtra("nutritionFeedback", feedback)  // 분석된 피드백 전달
+            // 1) 음식 이름 리스트 준비
+            val foodNames = foodListContainer.children
+                .map { (it as LinearLayout)
+                    .findViewById<TextView>(R.id.foodNameText)
+                    .text.toString() }
+                .toList()
+            Log.d("AnalyzeActivity", "화면에서 가져온 foodNames = $foodNames")
+
+            // 2) Coroutine 시작
+            lifecycleScope.launch {
+                try {
+                    Log.d("AnalyzeActivity", "코루틴 시작, API 호출 준비")
+
+                    // 2-1) 식약처 API로 영양성분 정보 가져오기
+                    val foodData = mutableListOf<Map<String, Any>>()
+                    for (name in foodNames) {
+                        Log.d("AnalyzeActivity", "API 요청: $name")
+                        val resp = ApiClient.service.getFoods(
+                            serviceKey = BuildConfig.FOOD_API_KEY,
+                            foodName   = name
+                        )
+
+                        if (resp.isSuccessful) {
+                            val item = resp.body()?.body?.items?.firstOrNull()
+                            if (item != null) {
+                                Log.d("AnalyzeActivity", "API 응답 성공: $item")
+                                foodData += mapOf(
+                                    "name" to item.name,
+                                    "nutrients" to mapOf(
+                                        "탄수화물" to item.carbs,
+                                        "단백질"   to item.protein,
+                                        "지방"     to item.fat,
+                                        "나트륨"   to item.sodium,
+                                        "당류"     to item.sugar
+                                    ),
+                                    "servingSize"    to item.servingSize,
+                                    "actualServing"  to (item.actualServing ?: "" )
+                                )
+                            } else {
+                                Log.w("AnalyzeActivity", "아이템이 없어요 for $name")
+                            }
+                        } else {
+                            Log.e("AnalyzeActivity", "API 에러: code=${resp.code()}, body=${resp.errorBody()?.string()}")
+                        }
+                    }
+
+                    Log.d("AnalyzeActivity", "모은 foodData = $foodData")
+
+                    // 2-2) GPT 분석 요청
+                    Log.d("AnalyzeActivity", "GPT 호출 전, foodData size=${foodData.size}")
+                    val nutritionAnalyzer = NutritionAnalyzer(this@AnalyzeActivity)
+                    nutritionAnalyzer.getNutritionFeedback(foodData) { feedback ->
+                        Log.d("AnalyzeActivity", "GPT 응답 feedback = $feedback")
+
+                        // 3) Firestore 저장 준비
+                        val uid = FirebaseAuth.getInstance().currentUser?.uid
+                        if (uid == null) {
+                            Log.e("AnalyzeActivity", "로그인된 유저 없음!!")
+                            return@getNutritionFeedback
+                        }
+                        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                        val timestamp = sdf.format(Date())   // e.g. "2025-06-20 19:45:30"
+
+                        val logDoc = mapOf(
+                            "food"       to foodData,
+                            "gptComment" to feedback,
+                            "timestamp"  to timestamp
+                        )
+
+                        Log.d("AnalyzeActivity", "Firestore에 저장할 logDoc = $logDoc")
+
+                        // 4) Firestore 저장
+                        FirebaseFirestore.getInstance()
+                            .collection("users")
+                            .document(uid)
+                            .collection("logs")
+                            .document(timestamp)
+                            .set(logDoc)
+                            .addOnSuccessListener {
+                                Log.d("AnalyzeActivity", "Firestore 저장 성공")
+                                Toast.makeText(this@AnalyzeActivity, "저장 성공!", Toast.LENGTH_SHORT).show()
+                                startActivity(
+                                    Intent(this@AnalyzeActivity, NutritionFeedbackActivity::class.java)
+                                        .putExtra("nutritionFeedback", feedback)
+                                )
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("AnalyzeActivity", "Firestore 저장 실패", e)
+                                Toast.makeText(this@AnalyzeActivity, "저장 실패…", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                } catch (e: Exception) {
+                    Log.e("AnalyzeActivity", "코루틴 예외 발생", e)
+                    Toast.makeText(this@AnalyzeActivity, "오류 발생: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
                 }
-                startActivity(intent)
             }
         }
+
 
 
     }

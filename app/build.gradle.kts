@@ -1,3 +1,11 @@
+import java.util.Properties
+
+val localPropsFile = rootProject.file("local.properties")
+val localProps = Properties().apply {
+    if (localPropsFile.exists()) load(localPropsFile.inputStream())
+}
+val foodApiKey: String   = localProps.getProperty("FOOD_API_KEY")   ?: ""
+val openaiApiKey: String = localProps.getProperty("OPENAI_API_KEY") ?: ""
 
 plugins {
     alias(libs.plugins.android.application)
@@ -12,6 +20,9 @@ android {
     namespace = "com.example.nutriscanner"
     compileSdk = 35
 
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "com.example.nutriscanner"
@@ -22,8 +33,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-
+        buildConfigField("String", "FOOD_API_KEY", "\"${foodApiKey}\"")
+        buildConfigField("String", "OPENAI_API_KEY", "\"${openaiApiKey}\""
+        )
     }
+
+
 
     buildTypes {
         release {
@@ -49,6 +64,8 @@ android {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+
 
     implementation("com.google.firebase:firebase-auth-ktx:22.1.1")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
