@@ -29,11 +29,14 @@ import com.example.nutriscanner.result.NutritionFeedbackActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 class AnalyzeActivity : AppCompatActivity() {
 
@@ -138,14 +141,29 @@ class AnalyzeActivity : AppCompatActivity() {
                             val item = resp.body()?.body?.items?.firstOrNull()
                             if (item != null) {
                                 Log.d("AnalyzeActivity", "API 응답 성공: $item")
+
+                                // 1) “100g” 처럼 붙어오는 단위에서 숫자만 뽑아내고
+                                val baseSize = item.servingSize
+                                    .replace(Regex("[^0-9.]"), "")
+                                    .toDoubleOrNull() ?: 100.0
+
+                                // 2) “230.000g” 처럼 붙어오는 실제 제공량에서 숫자만 뽑아
+                                val actualSize = (item.actualServing ?: "${baseSize}")
+                                    .replace(Regex("[^0-9.]"), "")
+                                    .toDoubleOrNull() ?: baseSize
+
+                                // 3) ratio 계산
+                                val ratio = actualSize / baseSize
+
+
                                 foodData += mapOf(
                                     "name" to item.name,
                                     "nutrients" to mapOf(
-                                        "탄수화물" to item.carbs,
-                                        "단백질"   to item.protein,
-                                        "지방"     to item.fat,
-                                        "나트륨"   to item.sodium,
-                                        "당류"     to item.sugar
+                                        "탄수화물" to item.carbs * ratio,
+                                        "단백질"   to item.protein * ratio,
+                                        "지방"     to item.fat * ratio,
+                                        "나트륨"   to item.sodium * ratio,
+                                        "당류"     to item.sugar * ratio
                                     ),
                                     "servingSize"    to item.servingSize,
                                     "actualServing"  to (item.actualServing ?: "" )
@@ -166,42 +184,47 @@ class AnalyzeActivity : AppCompatActivity() {
                     nutritionAnalyzer.getNutritionFeedback(foodData) { feedback ->
                         Log.d("AnalyzeActivity", "GPT 응답 feedback = $feedback")
 
-                        // 3) Firestore 저장 준비
-                        val uid = FirebaseAuth.getInstance().currentUser?.uid
-                        if (uid == null) {
-                            Log.e("AnalyzeActivity", "로그인된 유저 없음!!")
-                            return@getNutritionFeedback
+                        // 1) 사진 업로드 후 URL 받기
+                        uploadImageAndGetUrl { imageUrl ->
+                            // 2) 모든 음식의 영양성분 합계 계산
+                            val totalNutrients = calcTotalNutrients(foodData)
+
+                            // 3) Firestore 에 저장할 데이터 준비
+                            val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@uploadImageAndGetUrl
+                            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).apply {
+                                timeZone = TimeZone.getTimeZone("Asia/Seoul")
+                            }
+                            val timestamp = sdf.format(Date())
+
+                            val logDoc = mapOf(
+                                "food"           to foodData,
+                                "gptComment"     to feedback,
+                                "imageUri"       to imageUrl,
+                                "totalNutrients" to totalNutrients,
+                                "timestamp"      to timestamp
+                            )
+                            Log.d("AnalyzeActivity", "Firestore에 저장할 logDoc = $logDoc")
+
+                            // 4) Firestore 저장
+                            FirebaseFirestore.getInstance()
+                                .collection("users")
+                                .document(uid)
+                                .collection("logs")
+                                .document(timestamp)
+                                .set(logDoc)
+                                .addOnSuccessListener {
+                                    Log.d("AnalyzeActivity", "Firestore 저장 성공")
+                                    Toast.makeText(this@AnalyzeActivity, "저장 성공!", Toast.LENGTH_SHORT).show()
+                                    startActivity(
+                                        Intent(this@AnalyzeActivity, NutritionFeedbackActivity::class.java)
+                                            .putExtra("nutritionFeedback", feedback)
+                                    )
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("AnalyzeActivity", "Firestore 저장 실패", e)
+                                    Toast.makeText(this@AnalyzeActivity, "저장 실패…", Toast.LENGTH_SHORT).show()
+                                }
                         }
-                        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                        val timestamp = sdf.format(Date())   // e.g. "2025-06-20 19:45:30"
-
-                        val logDoc = mapOf(
-                            "food"       to foodData,
-                            "gptComment" to feedback,
-                            "timestamp"  to timestamp
-                        )
-
-                        Log.d("AnalyzeActivity", "Firestore에 저장할 logDoc = $logDoc")
-
-                        // 4) Firestore 저장
-                        FirebaseFirestore.getInstance()
-                            .collection("users")
-                            .document(uid)
-                            .collection("logs")
-                            .document(timestamp)
-                            .set(logDoc)
-                            .addOnSuccessListener {
-                                Log.d("AnalyzeActivity", "Firestore 저장 성공")
-                                Toast.makeText(this@AnalyzeActivity, "저장 성공!", Toast.LENGTH_SHORT).show()
-                                startActivity(
-                                    Intent(this@AnalyzeActivity, NutritionFeedbackActivity::class.java)
-                                        .putExtra("nutritionFeedback", feedback)
-                                )
-                            }
-                            .addOnFailureListener { e ->
-                                Log.e("AnalyzeActivity", "Firestore 저장 실패", e)
-                                Toast.makeText(this@AnalyzeActivity, "저장 실패…", Toast.LENGTH_SHORT).show()
-                            }
                     }
                 } catch (e: Exception) {
                     Log.e("AnalyzeActivity", "코루틴 예외 발생", e)
@@ -376,5 +399,62 @@ class AnalyzeActivity : AppCompatActivity() {
 
         // 컨테이너에 아이템 뷰 추가
         foodListContainer.addView(itemView)
+    }
+
+    private fun uploadImageAndGetUrl(onResult: (String) -> Unit) {
+        // 타임스탬프 기반으로 유니크한 경로
+        val filename = "images/${System.currentTimeMillis()}.png"
+        val storageRef = FirebaseStorage.getInstance().reference.child(filename)
+
+        // Bitmap -> ByteArray
+        val drawable = selectedPhoto.drawable as? BitmapDrawable
+        drawable?.bitmap?.let { bmp ->
+            ByteArrayOutputStream().use { baos ->
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, baos)
+                val data = baos.toByteArray()
+                storageRef.putBytes(data)
+                    .addOnSuccessListener { _ ->
+                        storageRef.downloadUrl
+                            .addOnSuccessListener { uri ->
+                                onResult(uri.toString())
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("AnalyzeActivity", "다운로드 URL 획득 실패", e)
+                                onResult("")  // 실패 시 빈 문자열
+                            }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("AnalyzeActivity", "이미지 업로드 실패", e)
+                        onResult("")
+                    }
+            }
+        } ?: run {
+            onResult("")  // drawable 이 없으면 빈 문자열
+        }
+    }
+
+    private fun calcTotalNutrients(foodData: List<Map<String, Any>>): Map<String, Double> {
+        var totalCarbs = 0.0
+        var totalProtein = 0.0
+        var totalFat = 0.0
+        var totalSodium = 0.0
+        var totalSugar = 0.0
+
+        for (food in foodData) {
+            val nutrients = food["nutrients"] as? Map<*, *>
+            totalCarbs   += (nutrients?.get("탄수화물") as? Number)?.toDouble() ?: 0.0
+            totalProtein+= (nutrients?.get("단백질")   as? Number)?.toDouble() ?: 0.0
+            totalFat     += (nutrients?.get("지방")     as? Number)?.toDouble() ?: 0.0
+            totalSodium  += (nutrients?.get("나트륨")   as? Number)?.toDouble() ?: 0.0
+            totalSugar   += (nutrients?.get("당류")     as? Number)?.toDouble() ?: 0.0
+        }
+
+        return mapOf(
+            "탄수화물" to totalCarbs,
+            "단백질"   to totalProtein,
+            "지방"     to totalFat,
+            "나트륨"   to totalSodium,
+            "당류"     to totalSugar
+        )
     }
 }

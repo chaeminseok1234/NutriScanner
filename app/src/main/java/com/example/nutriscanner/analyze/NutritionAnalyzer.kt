@@ -77,9 +77,9 @@ class NutritionAnalyzer(context: Context) {
         val foodJson = gson.toJson(foodList)
 
         return """
-            다음 음식들의 영양정보를 분석해줘:
-            1) 각 음식의 탄수화물, 단백질, 지방, 나트륨, 당 수치를 파악하고,
-            2) 식습관 개선을 위한 조언을 알려줘.
+            다음 음식들의 영양정보를 아래 조건을 토대로 분석해줘:
+            1) nutrients는 1회 제공량 기준이야. actualServing에 기반해서 이미 계산된 값이므로 추가 계산할 필요없어.
+            2) 식습관 개선을 위한 조언만을 현재 음식 영양정보를 토대로 각 음식마다 200자 이내로 알려줘. 입력한 영양소를 다시 보여줄 필요 없어.
 
             음식 리스트 (JSON):
             $foodJson
