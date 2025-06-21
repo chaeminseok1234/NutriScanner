@@ -27,6 +27,7 @@ import com.example.nutriscanner.MainActivity
 import com.example.nutriscanner.R
 import com.example.nutriscanner.result.NutritionFeedbackActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.nutriscanner.result.ResultActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -215,10 +216,11 @@ class AnalyzeActivity : AppCompatActivity() {
                                 .addOnSuccessListener {
                                     Log.d("AnalyzeActivity", "Firestore 저장 성공")
                                     Toast.makeText(this@AnalyzeActivity, "저장 성공!", Toast.LENGTH_SHORT).show()
-                                    startActivity(
-                                        Intent(this@AnalyzeActivity, NutritionFeedbackActivity::class.java)
-                                            .putExtra("nutritionFeedback", feedback)
-                                    )
+                                    val intent = Intent(this@AnalyzeActivity, ResultActivity::class.java).apply {
+                                        putExtra("uid", uid)
+                                        putExtra("timestamp", timestamp)
+                                    }
+                                    startActivity(intent)
                                 }
                                 .addOnFailureListener { e ->
                                     Log.e("AnalyzeActivity", "Firestore 저장 실패", e)
