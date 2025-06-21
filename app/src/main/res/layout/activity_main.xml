@@ -11,35 +11,33 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="#FFFFFF"
-        android:padding="16dp">
-
-        <!-- Toolbar -->
+        >
+        <!-- 헤더 -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:layout_height="65dp"
             android:paddingVertical="8dp"
-            android:paddingHorizontal="16dp">
+            android:paddingHorizontal="16dp"
+            android:background="#FFFFFF">
 
             <ImageButton
                 android:id="@+id/menuButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="@null"
-                android:contentDescription="Menu"
                 android:src="@drawable/ic_menu"
                 android:layout_alignParentStart="true"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"/>
 
             <TextView
                 android:id="@+id/appName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="NutriScanner"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#000000"
-                android:layout_centerInParent="true" />
+                android:layout_centerInParent="true"/>
 
             <TextView
                 android:id="@+id/withChatGPT"
@@ -49,8 +47,8 @@
                 android:textSize="12sp"
                 android:textColor="#000000"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true" />
-
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"/>
         </RelativeLayout>
 
         <View
@@ -58,20 +56,27 @@
             android:layout_height="1dp"
             android:background="#DDDDDD" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:padding="16dp">
+
+
         <!-- 인삿말 박스 -->
-        <TextView
-            android:id="@+id/greetingText"
+        <LinearLayout
+            android:id="@+id/greetingContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="안녕하세요.\nAI 영양 분석 및 관리 도우미\nNutriScanner입니다.\n\n무엇을 도와드릴까요?"
-            android:textSize="16sp"
-            android:textColor="#000000"
-            android:padding="16dp"
+            android:layout_height="260dp"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="@drawable/rounded_bg"
+            android:layoutAnimation="@anim/layout_fade"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="#EEF6FF"
-            android:background="@drawable/rounded_box"
-            android:textStyle="bold"/>
+            android:layout_marginBottom="18dp"
+            >
+        </LinearLayout>
 
         <!-- 버튼 박스 -->
         <LinearLayout
@@ -84,7 +89,7 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="160dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:padding="16dp"
@@ -95,7 +100,7 @@
 
                 <ImageButton
                     android:id="@+id/cameraButton"
-                    android:layout_width="65dp"
+                    android:layout_width="70dp"
                     android:layout_height="60dp"
                     android:src="@drawable/ic_camera"
                     android:contentDescription="Camera"
@@ -107,13 +112,13 @@
                     android:text="카메라로 바로찍기"
                     android:textSize="14sp"
                     android:textColor="#000000"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="12dp"
                     android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="160dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:padding="16dp"
@@ -136,7 +141,7 @@
                     android:text="갤러리에서 가져오기"
                     android:textSize="14sp"
                     android:textColor="#000000"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="12dp"
                     android:textStyle="bold"/>
             </LinearLayout>
         </LinearLayout>
@@ -145,12 +150,15 @@
         <Button
             android:id="@+id/recordButton"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="160dp"
             android:text="나의 기록 다시보기"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textColor="#F4F4F4"
+            android:textSize="24sp"
+            android:gravity="start|bottom"
+            android:padding="18dp"
             android:background="@drawable/rounded_button"
             android:layout_marginBottom="16dp" />
+    </LinearLayout>
     </LinearLayout>
 
     <!-- 네비게이션 드로어 -->

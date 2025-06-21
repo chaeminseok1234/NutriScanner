@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/rounded_white_box"
+    android:padding="8dp">
+
+    <!-- 헤더 영역 -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/foodName"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="4dp"
+            android:textColor="#333"/>
+
+        <ImageView
+            android:id="@+id/arrowIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_expand_more"/>
+    </LinearLayout>
+
+    <!-- 디테일 영역 (기본 숨김) -->
+    <TableLayout
+        android:id="@+id/detailLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:stretchColumns="*"
+        android:paddingTop="8dp">
+
+        <!-- 헤더 행 -->
+        <TableRow>
+            <TextView android:layout_margin="4dp" android:text="탄수화물" android:textStyle="bold" android:gravity="center" android:textColor="#000000"/>
+            <TextView android:layout_margin="4dp" android:text="단백질" android:textStyle="bold" android:gravity="center" android:textColor="#000000"/>
+            <TextView android:layout_margin="4dp" android:text="지방" android:textStyle="bold" android:gravity="center" android:textColor="#000000"/>
+            <TextView android:layout_margin="4dp" android:text="당류" android:textStyle="bold" android:gravity="center" android:textColor="#000000"/>
+            <TextView android:layout_margin="4dp" android:text="나트륨" android:textStyle="bold" android:gravity="center" android:textColor="#000000"/>
+        </TableRow>
+
+        <!-- 값 행 -->
+        <TableRow>
+            <TextView
+                android:id="@+id/tvCarbs"
+                android:layout_margin="4dp"
+                android:gravity="center"
+                android:textColor="#000000"/>
+            <TextView
+                android:id="@+id/tvProtein"
+                android:layout_margin="4dp"
+                android:gravity="center"
+                android:textColor="#000000"/>
+            <TextView
+                android:id="@+id/tvFat"
+                android:layout_margin="4dp"
+                android:gravity="center"
+                android:textColor="#000000"/>
+            <TextView
+                android:id="@+id/tvSugar"
+                android:layout_margin="4dp"
+                android:gravity="center"
+                android:textColor="#000000"/>
+            <TextView
+                android:id="@+id/tvSodium"
+                android:layout_margin="4dp"
+                android:gravity="center"
+                android:textColor="#000000"/>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

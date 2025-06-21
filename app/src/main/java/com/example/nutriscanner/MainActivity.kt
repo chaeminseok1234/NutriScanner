@@ -5,12 +5,23 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
+import android.util.TypedValue
+import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -59,6 +70,66 @@ class MainActivity : AppCompatActivity() {
         initViews()
         setupButtonListeners()
         setupDrawerMenuListener()
+
+        // 1) XML에 정의해둔 layoutAnimation 리소스 불러오기
+        val controller = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_fade)
+
+        // 2) greetingContainer는 <LinearLayout android:id="@+id/greetingContainer"> 여기에 추가
+        val container = findViewById<LinearLayout>(R.id.greetingContainer)
+        container.layoutAnimation = controller
+
+        // 3) string-array 읽어서 한 줄씩 TextView로 만들어 추가
+        val lines = resources.getStringArray(R.array.greeting_lines)
+        for (line in lines) {
+            val tv = TextView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                textSize = 24f
+                setTextColor(Color.BLACK)
+            }
+
+            // 4) Spannable 처리
+            val ssb = SpannableString(line)
+
+            // 4-1) "AI" 볼드
+            val aiIndex = line.indexOf("AI")
+            if (aiIndex >= 0) {
+                ssb.setSpan(
+                    StyleSpan(Typeface.BOLD),
+                    aiIndex, aiIndex + 2,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+
+            // 4-2) "NutriScanner" 의 N 색깔 #42A5F5, S 색깔 #26A69A
+            val nutriIndex = line.indexOf("NutriScanner")
+            if (nutriIndex >= 0) {
+                // 'N'
+                ssb.setSpan(
+                    ForegroundColorSpan(Color.parseColor("#42A5F5")),
+                    nutriIndex, nutriIndex + 1,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                // 'S' (문자열의 다섯 번째 문자)
+                val sPos = nutriIndex + 5
+                ssb.setSpan(
+                    ForegroundColorSpan(Color.parseColor("#26A69A")),
+                    sPos, sPos + 1,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+
+            // 5) 최종 텍스트 설정
+            tv.text = ssb
+
+            // 6) 컨테이너에 추가
+            container.addView(tv)
+        }
+
+        // 7) 애니메이션 시작
+        container.startLayoutAnimation()
     }
 
     private fun checkCameraPermission(): Boolean {

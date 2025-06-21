@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">NutriScanner</string>
     <string name="default_web_client_id">967719099993-8s54gbv3t5cqoc47s0gd6mb973qt5r5m.apps.googleusercontent.com</string>
+    <string-array name="greeting_lines">
+        <item>안녕하세요.</item>
+        <item>AI 영양 분석 및 관리 도우미</item>
+        <item>NutriScanner입니다.</item>
+        <item></item>
+        <item>무엇을 도와드릴까요?</item>
+    </string-array>
 </resources>
