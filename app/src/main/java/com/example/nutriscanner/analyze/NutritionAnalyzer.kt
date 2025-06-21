@@ -1,9 +1,11 @@
 package com.example.nutriscanner.analyze
 
+import com.example.nutriscanner.BuildConfig
 import android.content.Context
 import android.util.Log
 import com.example.nutriscanner.api.GPTService
 import com.example.nutriscanner.model.*
+import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
@@ -25,7 +27,10 @@ class NutritionAnalyzer(context: Context) {
                     .addInterceptor { chain ->
                         // HTTP 요청에 Authorization 헤더 추가
                         val request = chain.request().newBuilder()
-                            .addHeader("Authorization", "Bearer ") // Bearer뒤에 API키 기입하시면 됩니당
+                            .addHeader(
+                                "Authorization",
+                                "Bearer ${BuildConfig.OPENAI_API_KEY}"
+                            )
                             .build()
                         chain.proceed(request)
                     }
@@ -41,8 +46,7 @@ class NutritionAnalyzer(context: Context) {
     }
 
 
-    fun getNutritionFeedback(foodList: List<String>, callback: (String) -> Unit) {
-        // 대화 메시지 구성 (시스템 + 유저 입력)
+    fun getNutritionFeedback(foodList: List<Map<String, Any>>, callback: (String) -> Unit) {
         val messages = listOf(
             Message("system", "You are a helpful nutritionist."), // 시스템 역할 설정
             Message("user", buildPrompt(foodList)) // 사용자 질문 내용 생성
@@ -81,13 +85,17 @@ class NutritionAnalyzer(context: Context) {
     }
 
 
-    //gpt 프로젝트 지침처럼 넣어주는 함수
-    private fun buildPrompt(foodList: List<String>): String {
-        val foods = foodList.joinToString(", ")
+    private fun buildPrompt(foodList: List<Map<String, Any>>): String {
+        val gson = Gson()
+        val foodJson = gson.toJson(foodList)
+
         return """
-            음식 목록: $foods
-            각 음식의 탄수화물, 단백질, 지방, 나트륨, 당에 대한 영양 성분을 분석하고,
-            식습관 개선 사항을 피드백 해 주세요. 각 음식에 대한 식습관 개선을 제시해주세요.
+            다음 음식들의 영양정보를 아래 조건을 토대로 분석해줘:
+            1) nutrients는 1회 제공량 기준이야. actualServing에 기반해서 이미 계산된 값이므로 추가 계산할 필요없어.
+            2) 식습관 개선을 위한 조언만을 현재 음식 영양정보를 토대로 각 음식마다 200자 이내로 알려줘. 입력한 영양소를 다시 보여줄 필요 없어.
+
+            음식 리스트 (JSON):
+            $foodJson
         """.trimIndent()
     }
 }
