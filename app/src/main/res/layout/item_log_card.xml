@@ -30,7 +30,7 @@
     <ImageView
         android:id="@+id/foodImage"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="300dp"
         android:layout_marginTop="8dp"
         android:scaleType="centerCrop"
         android:src="@drawable/sample" />
