@@ -14,7 +14,7 @@
         <!-- 2) 툴바만 먼저 배치 (ScrollView 바깥) -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="65dp"
             android:paddingVertical="8dp"
             android:paddingHorizontal="16dp"
             android:background="#FFFFFF">
@@ -130,7 +130,7 @@
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="280dp"
+                    android:layout_height="300dp"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="2dp"
                     android:layout_marginBottom="12dp"
