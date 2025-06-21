@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:layout_marginLeft="4dp"
             android:textColor="#333"/>
 
         <ImageView
@@ -43,30 +44,40 @@
 
         <!-- 헤더 행 -->
         <TableRow>
-            <TextView android:layout_margin="4dp" android:text="탄수화물" android:textStyle="bold"/>
-            <TextView android:layout_margin="4dp" android:text="단백질" android:textStyle="bold"/>
-            <TextView android:layout_margin="4dp" android:text="지방" android:textStyle="bold"/>
-            <TextView android:layout_margin="4dp" android:text="당류" android:textStyle="bold"/>
-            <TextView android:layout_margin="4dp" android:text="나트륨" android:textStyle="bold"/>
+            <TextView android:layout_margin="4dp" android:text="탄수화물" android:textStyle="bold" android:gravity="center" android:textColor="#000000"/>
+            <TextView android:layout_margin="4dp" android:text="단백질" android:textStyle="bold" android:gravity="center" android:textColor="#000000"/>
+            <TextView android:layout_margin="4dp" android:text="지방" android:textStyle="bold" android:gravity="center" android:textColor="#000000"/>
+            <TextView android:layout_margin="4dp" android:text="당류" android:textStyle="bold" android:gravity="center" android:textColor="#000000"/>
+            <TextView android:layout_margin="4dp" android:text="나트륨" android:textStyle="bold" android:gravity="center" android:textColor="#000000"/>
         </TableRow>
 
         <!-- 값 행 -->
         <TableRow>
             <TextView
                 android:id="@+id/tvCarbs"
-                android:layout_margin="4dp" />
+                android:layout_margin="4dp"
+                android:gravity="center"
+                android:textColor="#000000"/>
             <TextView
                 android:id="@+id/tvProtein"
-                android:layout_margin="4dp" />
+                android:layout_margin="4dp"
+                android:gravity="center"
+                android:textColor="#000000"/>
             <TextView
                 android:id="@+id/tvFat"
-                android:layout_margin="4dp" />
+                android:layout_margin="4dp"
+                android:gravity="center"
+                android:textColor="#000000"/>
             <TextView
                 android:id="@+id/tvSugar"
-                android:layout_margin="4dp" />
+                android:layout_margin="4dp"
+                android:gravity="center"
+                android:textColor="#000000"/>
             <TextView
                 android:id="@+id/tvSodium"
-                android:layout_margin="4dp" />
+                android:layout_margin="4dp"
+                android:gravity="center"
+                android:textColor="#000000"/>
         </TableRow>
     </TableLayout>
 </LinearLayout>

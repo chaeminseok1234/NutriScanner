@@ -8,81 +8,68 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nutriscanner.R
-import com.example.nutriscanner.result.Food
 import com.example.nutriscanner.result.ResultActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MyLogActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MyLogAdapter
-    private lateinit var db: FirebaseFirestore
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mylog) 
-
-        db = FirebaseFirestore.getInstance()
+        setContentView(R.layout.activity_mylog)
 
         recyclerView = findViewById(R.id.myLogRecyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this) // 세로 방향 리스트
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         fetchDataFromFirestore()
     }
 
-    
-      
-    //Firestore에서 사용자 로그 데이터 가져옴
     private fun fetchDataFromFirestore() {
-        val userId = "0n4FL4JO76Y5PocMIiaATvpOZTh2" // 임시 사용자 ID (테스트용)
+        // 현재 로그인된 유저 UID 가져오기
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId.isNullOrEmpty()) {
+            Toast.makeText(this, "로그인된 유저가 없습니다.", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
-        // 해당 사용자의 logs 컬렉션에서 모든 문서 가져오기
+        // users/{uid}/logs 컬렉션에서 모든 문서 조회
         db.collection("users")
             .document(userId)
             .collection("logs")
             .get()
             .addOnSuccessListener { result ->
-                Log.d("skrskr", "유저 로그 가져오기 성공: ${result.size()}개")
+                Log.d("MyLogActivity", "유저 로그 가져오기 성공: ${result.size()}개")
 
-                // 가져온 문서들을 LogItem 리스트로 변환
+                // 문서 ID(id) 와 imageUri 필드를 LogItem 으로 매핑
                 val logList = result.map { doc ->
-                    val foods = (doc.get("foods") as? List<Map<String, Any>>)?.map { foodMap ->
-                        val name = foodMap["name"] as? String ?: "" // 음식 이름
-                        val nutrients = foodMap["nutrients"] as? Map<String, Double> ?: emptyMap() // 영양소 정보
-                        Food(name, nutrients) // Food 객체 생성
-                    } ?: emptyList()
-
-                    // 각 로그 문서의 정보를 LogItem 객체로 구성
                     LogItem(
-                        id = doc.id,
-                        dateTime = doc.id, // 문서 ID가 날짜 문자열이므로 그대로 사용
-                        imageUri = doc.getString("imageUri") ?: "",
-                        foods = foods,
-                        totalNutrients = doc.get("totalNutrients") as? Map<String, Double> ?: emptyMap(),
-                        gptComment = doc.getString("gptComment") ?: ""
+                        id        = doc.id,
+                        dateTime  = doc.id,
+                        imageUri  = doc.getString("imageUri") ?: ""
                     )
                 }
+                    // 최신순 정렬
+                    .sortedByDescending { it.dateTime }
 
-                // 어댑터 생성 및 클릭 리스너 등록
+                // 어댑터 세팅
                 adapter = MyLogAdapter(logList.toMutableList()) { item ->
-                    Toast.makeText(this, "${item.dateTime} 선택됨", Toast.LENGTH_SHORT).show()
-                    // ResultActivity로 데이터 전달 후 이동
+                    // 클릭 시 ResultActivity 로 uid, timestamp 전달
                     val intent = Intent(this, ResultActivity::class.java).apply {
-                        putExtra("dateTime", item.dateTime)
-                        putExtra("imageUri", item.imageUri)
-                        putParcelableArrayListExtra("foods", ArrayList(item.foods)) // Food 리스트 전달
-                        putExtra("totalNutrients", HashMap(item.totalNutrients))   // 전체 영양소 Map 전달
-                        putExtra("gptComment", item.gptComment) // GPT 코멘트 전달
+                        putExtra("uid", userId)
+                        putExtra("timestamp", item.id)
                     }
-
                     startActivity(intent)
                 }
-
-                // RecyclerView에 어댑터 연결
                 recyclerView.adapter = adapter
             }
-            .addOnFailureListener {
-                Log.e("skrskr", "로그 불러오기 실패: ${it.message}")
+            .addOnFailureListener { e ->
+                Log.e("MyLogActivity", "로그 불러오기 실패", e)
+                Toast.makeText(this, "로그를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
     }
 }

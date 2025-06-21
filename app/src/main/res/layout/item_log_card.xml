@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:background="@drawable/rounded_box"
     android:layout_marginBottom="12dp"
-    android:padding="12dp">
+    android:padding="16dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -30,7 +30,8 @@
     <ImageView
         android:id="@+id/foodImage"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:background="@drawable/rounded_bg"
+        android:layout_height="220dp"
         android:layout_marginTop="8dp"
         android:scaleType="centerCrop"
         android:src="@drawable/sample" />
