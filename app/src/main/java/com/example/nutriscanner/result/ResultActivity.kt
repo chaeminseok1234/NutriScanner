@@ -1,6 +1,11 @@
 package com.example.nutriscanner.result
 
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -9,7 +14,9 @@ import android.widget.TableLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.example.nutriscanner.MainActivity
 import com.example.nutriscanner.R
+
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Locale
 
@@ -126,5 +133,37 @@ class ResultActivity : AppCompatActivity() {
             .addOnFailureListener { e ->
                 Log.e("ResultActivity", "로그 불러오기 실패", e)
             }
+
+        // 헤더 색깔 조정
+        val appName = findViewById<TextView>(R.id.appName)
+        val text = "NutriScanner"
+        val spannable = SpannableString(text).apply {
+            // 0번 인덱스부터 1글자(N) → 파란색
+            setSpan(
+                ForegroundColorSpan(Color.parseColor("#42A5F5")),
+                0, 1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            // 3번 인덱스부터 4글자 중 하나(S) → 초록색
+            setSpan(
+                ForegroundColorSpan(Color.parseColor("#26A69A")),
+                5, 6,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        appName.text = spannable
+
+        // 클릭시 홈화면으로
+        appName.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+        }
+
+
+
     }
+
+
+
 }
