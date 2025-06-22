@@ -222,8 +222,10 @@ class MainActivity : AppCompatActivity() {
             GALLERY_INTENT_CODE -> {
                 val imageUri: Uri? = data?.data
                 if (imageUri != null) {
-                    // 선택한 이미지 Uri 처리
-                    Toast.makeText(this, "사진 선택 완료", Toast.LENGTH_SHORT).show()
+                    // drawbar 갤러리도 분석 엑티비티로 이동
+                    val intent = Intent(this, AnalyzeActivity::class.java)
+                    intent.putExtra("imageUri", imageUri.toString())  // Uri를 문자열로 변환해서 전달
+                    startActivity(intent)
                 }
             }
         }
