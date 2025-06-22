@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
@@ -51,7 +52,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         // 1) Auth 인스턴스 가져와서
         auth = FirebaseAuth.getInstance()
@@ -130,6 +130,26 @@ class MainActivity : AppCompatActivity() {
 
         // 7) 애니메이션 시작
         container.startLayoutAnimation()
+
+        // 헤더 색깔 조정
+        val appName = findViewById<TextView>(R.id.appName)
+        val text = "NutriScanner"
+        val spannable = SpannableString(text).apply {
+            // 0번 인덱스부터 1글자(N) → 파란색
+            setSpan(
+                ForegroundColorSpan(Color.parseColor("#42A5F5")),
+                0, 1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            // 3번 인덱스부터 4글자 중 하나(S) → 초록색
+            setSpan(
+                ForegroundColorSpan(Color.parseColor("#26A69A")),
+                5, 6,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        appName.text = spannable
+
     }
 
     private fun checkCameraPermission(): Boolean {
