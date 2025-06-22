@@ -4,6 +4,7 @@ import com.example.nutriscanner.BuildConfig
 import com.example.nutriscanner.api.ApiClient
 import android.Manifest
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -133,6 +134,12 @@ class AnalyzeActivity : AppCompatActivity() {
 
         // 6) 영양성분 분석하기 버튼 클릭
         analyzeNutritionButton.setOnClickListener {
+            val progress = ProgressDialog(this).apply {
+                setMessage("분석중입니다. 잠시만 기다려주세요...")
+                setCancelable(false)
+                show()
+            }
+
             // 0) 버튼 클릭 바로 로그
             Log.d("AnalyzeActivity", "분석 버튼 클릭됨")
 
@@ -235,7 +242,7 @@ class AnalyzeActivity : AppCompatActivity() {
                                 .set(logDoc)
                                 .addOnSuccessListener {
                                     Log.d("AnalyzeActivity", "Firestore 저장 성공")
-                                    Toast.makeText(this@AnalyzeActivity, "저장 성공!", Toast.LENGTH_SHORT).show()
+                                    progress.dismiss()
                                     val intent = Intent(this@AnalyzeActivity, ResultActivity::class.java).apply {
                                         putExtra("uid", uid)
                                         putExtra("timestamp", timestamp)
