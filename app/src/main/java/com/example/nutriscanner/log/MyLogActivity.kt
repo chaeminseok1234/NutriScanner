@@ -1,12 +1,18 @@
 package com.example.nutriscanner.log
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.nutriscanner.MainActivity
 import com.example.nutriscanner.R
 import com.example.nutriscanner.result.ResultActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +32,32 @@ class MyLogActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         fetchDataFromFirestore()
+
+        // 헤더 색깔 조정
+        val appName = findViewById<TextView>(R.id.appName)
+        val text = "NutriScanner"
+        val spannable = SpannableString(text).apply {
+            // 0번 인덱스부터 1글자(N) → 파란색
+            setSpan(
+                ForegroundColorSpan(Color.parseColor("#42A5F5")),
+                0, 1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            // 3번 인덱스부터 4글자 중 하나(S) → 초록색
+            setSpan(
+                ForegroundColorSpan(Color.parseColor("#26A69A")),
+                5, 6,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        appName.text = spannable
+
+        // 클릭시 홈화면으로
+        appName.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+        }
     }
 
     private fun fetchDataFromFirestore() {

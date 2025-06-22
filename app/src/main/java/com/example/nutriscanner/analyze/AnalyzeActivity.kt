@@ -4,15 +4,20 @@ import com.example.nutriscanner.BuildConfig
 import com.example.nutriscanner.api.ApiClient
 import android.Manifest
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.InputType
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +30,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import com.example.nutriscanner.MainActivity
 import com.example.nutriscanner.R
-import com.example.nutriscanner.result.NutritionFeedbackActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.nutriscanner.result.ResultActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -33,7 +37,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
-import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -65,9 +68,27 @@ class AnalyzeActivity : AppCompatActivity() {
         // FoodAnalyzer 인스턴스 초기화
         foodAnalyzer = FoodAnalyzer(this)
 
-        val appNameText = findViewById<TextView>(R.id.appName)
+        // 헤더 색깔 조정
+        val appName = findViewById<TextView>(R.id.appName)
+        val text = "NutriScanner"
+        val spannable = SpannableString(text).apply {
+            // 0번 인덱스부터 1글자(N) → 파란색
+            setSpan(
+                ForegroundColorSpan(Color.parseColor("#42A5F5")),
+                0, 1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            // 3번 인덱스부터 4글자 중 하나(S) → 초록색
+            setSpan(
+                ForegroundColorSpan(Color.parseColor("#26A69A")),
+                5, 6,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        appName.text = spannable
 
-        appNameText.setOnClickListener {
+        // 클릭시 홈화면으로
+        appName.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
@@ -113,6 +134,12 @@ class AnalyzeActivity : AppCompatActivity() {
 
         // 6) 영양성분 분석하기 버튼 클릭
         analyzeNutritionButton.setOnClickListener {
+            val progress = ProgressDialog(this).apply {
+                setMessage("분석중입니다. 잠시만 기다려주세요...")
+                setCancelable(false)
+                show()
+            }
+
             // 0) 버튼 클릭 바로 로그
             Log.d("AnalyzeActivity", "분석 버튼 클릭됨")
 
@@ -215,7 +242,7 @@ class AnalyzeActivity : AppCompatActivity() {
                                 .set(logDoc)
                                 .addOnSuccessListener {
                                     Log.d("AnalyzeActivity", "Firestore 저장 성공")
-                                    Toast.makeText(this@AnalyzeActivity, "저장 성공!", Toast.LENGTH_SHORT).show()
+                                    progress.dismiss()
                                     val intent = Intent(this@AnalyzeActivity, ResultActivity::class.java).apply {
                                         putExtra("uid", uid)
                                         putExtra("timestamp", timestamp)
