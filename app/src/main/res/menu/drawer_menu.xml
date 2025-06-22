@@ -1,25 +1,47 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 분석도구 섹션 -->
+    <group
+        android:id="@+id/group_analysis_tools"
+        android:checkableBehavior="none"
+        android:title="분석도구">
 
-    <!-- 공통 메뉴 -->
-    <group android:title="분석도구">
         <item
             android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_camera"
+            android:icon="@drawable/icon_camera"
             android:title="카메라" />
 
         <item
             android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_gallery"
+            android:icon="@drawable/icon_image"
             android:title="갤러리" />
     </group>
 
-    <group android:title="기록관리">
+    <!-- 기록관리 섹션 -->
+    <group
+        android:id="@+id/group_logs"
+        android:checkableBehavior="none"
+        android:title="기록관리">
+
         <item
-            android:id="@+id/nav_records"
-            android:icon="@drawable/ic_check"
+            android:id="@+id/nav_my_logs"
+            android:icon="@drawable/icon_check_circle"
             android:title="나의 기록" />
     </group>
 
+    <!-- 사용자 정보 섹션 -->
+    <group
+        android:id="@+id/group_user_info"
+        android:checkableBehavior="none"
+        android:title="사용자 정보">
 
+        <item
+            android:id="@+id/nav_user_name"
+            android:icon="@drawable/icon_person"
+            android:title="홍길동" />
+
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/icon_exit"
+            android:title="로그아웃" />
+    </group>
 </menu>

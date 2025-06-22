@@ -64,12 +64,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 3) 로그인 되어 있으면 레이아웃 세팅
-
         setContentView(R.layout.activity_main)
 
         initViews()
         setupButtonListeners()
-        setupDrawerMenuListener()
+        setupDrawerMenu()
 
         // 1) XML에 정의해둔 layoutAnimation 리소스 불러오기
         val controller = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_fade)
@@ -282,29 +281,44 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupDrawerMenuListener() {
+    private fun setupDrawerMenu() {
         val navView = findViewById<NavigationView>(R.id.navigationView)
+        val menu    = navView.menu
+
+        // 현재 로그인된 유저 정보 가져오기
+        val user = FirebaseAuth.getInstance().currentUser
+        // displayName 이 null 이라면, email 앞부분을 대신 사용
+        val nameToShow = user?.displayName
+            ?: user?.email?.substringBefore("@")
+            ?: "Guest"
+
+        // nav_user_name 아이템의 타이틀을 실제 이름으로 변경
+        menu.findItem(R.id.nav_user_name).title = nameToShow
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_camera -> {
                     if (checkCameraPermission()) openCamera() else requestCameraPermission()
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    true
                 }
                 R.id.nav_gallery -> {
                     if (checkStoragePermission()) openGallery() else requestStoragePermission()
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    true
                 }
-                R.id.nav_records -> {
+                R.id.nav_my_logs -> {
                     startActivity(Intent(this, MyLogActivity::class.java))
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    true
                 }
-
-                else -> false
+                R.id.nav_logout -> {
+                    FirebaseAuth.getInstance().signOut()
+                    startActivity(
+                        Intent(this, LoginActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    )
+                }
+                else -> return@setNavigationItemSelectedListener false
             }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
         }
     }
+
+
 }

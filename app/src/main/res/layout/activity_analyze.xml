@@ -188,12 +188,31 @@
         </ScrollView>
     </LinearLayout>
 
-    <!-- 네비게이션 드로어 -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="280dp"
+    <!-- 2) 드로어 뷰: LinearLayout 으로 감싸기 -->
+    <LinearLayout
+        android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#FFFFFF"
-        app:menu="@menu/drawer_menu"/>
+        android:orientation="vertical">
+
+        <!-- 2-1) 실제 메뉴가 표시될 NavigationView (weight=1 로 높이 꽉 채우고) -->
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigationView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:menu="@menu/drawer_menu" />
+
+        <!-- 2-2) 하단 고정 텍스트 -->
+        <TextView
+            android:id="@+id/drawerFooter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="ⓒ PNU CSE 신의철, 채민석"
+            android:background="#FAFAFA"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:gravity="center" />
+    </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

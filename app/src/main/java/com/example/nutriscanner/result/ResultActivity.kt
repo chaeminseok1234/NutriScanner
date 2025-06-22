@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.nutriscanner.MainActivity
 import com.example.nutriscanner.R
+
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Locale
 
@@ -158,5 +159,11 @@ class ResultActivity : AppCompatActivity() {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
         }
+
+
+
     }
+
+
+
 }
